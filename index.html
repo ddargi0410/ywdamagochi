@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="description" content="영화 속 명곡 이야기 듣기평가 대비용 35곡 학습 사이트" />
+  <title>영화 속 명곡 이야기 · Listening Lab</title>
+  <link rel="preconnect" href="https://www.youtube-nocookie.com" />
+  <link rel="preconnect" href="https://i.ytimg.com" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#songGrid">곡 목록으로 건너뛰기</a>
+
+  <header class="hero">
+    <nav class="topbar" aria-label="주요 메뉴">
+      <a class="brand" href="#top" aria-label="처음으로">
+        <span class="brand-mark" aria-hidden="true">♪</span>
+        <span>Listening Lab</span>
+      </a>
+      <div class="top-actions">
+        <button id="quizOpenBtn" class="btn btn-accent" type="button">랜덤 듣기 퀴즈</button>
+        <button id="themeBtn" class="icon-btn" type="button" aria-label="화면 테마 바꾸기" title="화면 테마 바꾸기">☾</button>
+      </div>
+    </nav>
+
+    <div id="top" class="hero-inner">
+      <p class="eyebrow">영화 속 명곡 이야기 · 듣기평가 준비</p>
+      <h1>장면을 기억하면<br /><em>음악이 들린다</em></h1>
+      <p class="hero-copy">
+        강의에서 중요하게 다룬 35곡을 영화·작곡가·듣기 특징·미학적 의미로 연결했습니다.
+        카드를 열어 실제 곡을 듣고, 완료 표시와 랜덤 퀴즈로 반복하세요.
+      </p>
+
+      <div class="hero-stats" aria-label="학습 현황">
+        <div class="stat"><strong>35</strong><span>핵심 곡</span></div>
+        <div class="stat"><strong>25</strong><span>초핵심</span></div>
+        <div class="stat"><strong>10</strong><span>추가 핵심</span></div>
+        <div class="stat progress-stat"><strong id="progressNumber">0%</strong><span>학습 완료</span></div>
+      </div>
+      <div class="progress-track" aria-label="전체 학습 진도">
+        <span id="progressBar"></span>
+      </div>
+    </div>
+  </header>
+
+  <aside id="playbackNotice" class="playback-notice" hidden aria-live="polite">
+    <div class="playback-notice__icon" aria-hidden="true">▶</div>
+    <div>
+      <strong>다운로드 파일에서는 유튜브가 카드 안 재생을 차단합니다.</strong>
+      <p>현재 주소가 <code>content://</code> 또는 <code>file://</code>이라 유튜브가 요구하는 출처 정보가 전달되지 않습니다. 이 화면에서는 재생 버튼을 누르면 유튜브 앱·브라우저로 열립니다. 사이트를 GitHub Pages 같은 HTTPS 주소에 올리면 카드 안 플레이어가 자동으로 활성화됩니다.</p>
+    </div>
+  </aside>
+
+  <main>
+    <section class="study-guide section-shell" aria-labelledby="guideTitle">
+      <div class="section-heading compact">
+        <div>
+          <p class="eyebrow dark">시험 직전에는 이렇게</p>
+          <h2 id="guideTitle">세 가지를 연결해서 듣기</h2>
+        </div>
+      </div>
+      <div class="guide-grid">
+        <article><span>01</span><h3>영화·작곡가</h3><p>곡을 듣자마자 작품과 음악가를 먼저 떠올립니다.</p></article>
+        <article><span>02</span><h3>귀에 들리는 특징</h3><p>악기, 리듬, 반복, 음색처럼 첫 10초의 단서를 잡습니다.</p></article>
+        <article><span>03</span><h3>장면에서의 역할</h3><p>라이트모티프, 대위법, 감정의 조직화 중 무엇인지 말해 봅니다.</p></article>
+      </div>
+    </section>
+
+    <section class="catalog section-shell" aria-labelledby="catalogTitle">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow dark">35곡 학습 카드</p>
+          <h2 id="catalogTitle">듣고, 연결하고, 완료하기</h2>
+        </div>
+        <p id="resultCount" class="result-count" aria-live="polite"></p>
+      </div>
+
+      <div class="toolbar" aria-label="곡 검색과 필터">
+        <label class="search-box">
+          <span aria-hidden="true">⌕</span>
+          <input id="searchInput" type="search" placeholder="영화, 곡명, 작곡가, 핵심어 검색" autocomplete="off" />
+        </label>
+        <select id="tierFilter" aria-label="학습 단계 선택">
+          <option value="all">전체 단계</option>
+          <option value="core">초핵심 25곡</option>
+          <option value="plus">추가 핵심 10곡</option>
+        </select>
+        <select id="categoryFilter" aria-label="분야 선택">
+          <option value="all">전체 분야</option>
+        </select>
+        <label class="switch-label">
+          <input id="unfinishedOnly" type="checkbox" />
+          <span class="switch" aria-hidden="true"></span>
+          미완료만
+        </label>
+      </div>
+
+      <div id="conceptFilters" class="chip-row" aria-label="핵심 개념 필터"></div>
+      <div id="songGrid" class="song-grid"></div>
+      <div id="emptyState" class="empty-state" hidden>
+        <strong>조건에 맞는 곡이 없습니다.</strong>
+        <p>검색어나 필터를 바꿔 보세요.</p>
+      </div>
+    </section>
+
+    <section class="concept-map section-shell" aria-labelledby="conceptTitle">
+      <div class="section-heading compact">
+        <div>
+          <p class="eyebrow dark">시험 직전 묶어 외우기</p>
+          <h2 id="conceptTitle">핵심 개념 지도</h2>
+        </div>
+      </div>
+      <div class="concept-grid">
+        <article>
+          <h3>라이트모티프</h3>
+          <p>특정 인물·존재·기억을 선율로 먼저 알아차리게 하는 음악.</p>
+          <ul>
+            <li>《죠스》의 두 음 → 보이지 않는 상어</li>
+            <li>〈The Imperial March〉 → 다스 베이더</li>
+            <li>〈Hedwig’s Theme〉 → 마법 세계</li>
+            <li>《시네마 천국》 테마 → 기억과 시간</li>
+          </ul>
+        </article>
+        <article>
+          <h3>대위법적 사용</h3>
+          <p>화면과 반대되는 음악을 배치해 아이러니와 비극성을 더하는 방식.</p>
+          <ul>
+            <li>《양들의 침묵》 바흐 → 질서와 광기</li>
+            <li>《올드보이》 왈츠 → 우아함과 폭력</li>
+            <li>《친절한 금자씨》 비발디 → 성스러움과 복수</li>
+            <li>《지옥의 묵시록》 바그너 → 영웅주의와 학살</li>
+          </ul>
+        </article>
+        <article>
+          <h3>작곡가의 언어</h3>
+          <p>멜로디만큼 ‘어떻게 소리를 만드는가’를 구분합니다.</p>
+          <ul>
+            <li>모리코네 → 실험적 음향과 서정성</li>
+            <li>존 윌리엄스 → 선명한 테마와 교향악</li>
+            <li>한스 짐머 → 반복·레이어링·전자음향</li>
+            <li>사카모토 → 동서양의 융합과 여백</li>
+            <li>히사이시 조 → 미니멀리즘과 따뜻한 향수</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="section-shell footer-inner">
+      <div>
+        <strong>영화 속 명곡 이야기 · Listening Lab</strong>
+        <p>강의안을 토대로 듣기평가에 필요한 핵심만 학습용으로 재구성했습니다.</p>
+      </div>
+      <p class="footer-note">다운로드한 HTML(content://·file://)에서는 YouTube 오류 153을 막기 위해 외부 재생으로 전환됩니다. HTTPS로 게시하면 카드 안 플레이어가 자동으로 활성화됩니다.</p>
+    </div>
+  </footer>
+
+  <dialog id="quizDialog" class="quiz-dialog">
+    <form method="dialog" class="quiz-shell">
+      <button class="dialog-close" value="close" aria-label="퀴즈 닫기">×</button>
+      <p class="eyebrow dark">랜덤 듣기 퀴즈</p>
+      <h2>음악을 듣고 맞혀 보세요</h2>
+      <p class="quiz-instruction">처음에는 정답을 가리고 재생합니다. 영화·곡명·작곡가를 말한 뒤 정답을 확인하세요.</p>
+      <div id="quizPlayer" class="quiz-player"></div>
+      <div id="quizAnswer" class="quiz-answer" hidden></div>
+      <div class="quiz-actions">
+        <button id="revealBtn" class="btn btn-accent" type="button">정답 보기</button>
+        <button id="nextQuizBtn" class="btn btn-dark" type="button">다음 문제</button>
+      </div>
+    </form>
+  </dialog>
+
+  <template id="songCardTemplate">
+    <article class="song-card">
+      <div class="thumb-wrap">
+        <img class="thumb" alt="" loading="lazy" />
+        <span class="rank-badge"></span>
+        <span class="tier-badge"></span>
+        <button class="play-overlay" type="button" aria-label="유튜브 플레이어 열기"><span>▶</span></button>
+      </div>
+      <div class="card-body">
+        <div class="card-meta"><span class="week"></span><span class="category"></span></div>
+        <p class="film"></p>
+        <h3 class="track-title"></h3>
+        <p class="artist"></p>
+        <div class="keywords"></div>
+        <details>
+          <summary>시험 핵심 펼치기</summary>
+          <div class="detail-block">
+            <div><strong>귀에 들리는 특징</strong><p class="listen"></p></div>
+            <div><strong>장면·맥락</strong><p class="scene"></p></div>
+            <div><strong>꼭 알아둘 의미</strong><p class="meaning"></p></div>
+          </div>
+        </details>
+        <div class="player-slot" hidden></div>
+        <div class="card-actions">
+          <button class="btn player-btn" type="button">플레이어 열기</button>
+          <a class="youtube-link" target="_blank" rel="noopener noreferrer">유튜브에서 열기 ↗</a>
+          <label class="complete-label"><input class="complete-check" type="checkbox" /><span>학습 완료</span></label>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
